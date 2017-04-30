@@ -4,3 +4,9 @@ C:\Users\jaeha\Documents\Swinburne\Intro to AI\Assignment2\InferenceEngine\Infer
 C:\Users\jaeha\Documents\Swinburne\Intro to AI\Assignment2\InferenceEngine\InferenceEngine\obj\Debug\InferenceEngine.exe
 C:\Users\jaeha\Documents\Swinburne\Intro to AI\Assignment2\InferenceEngine\InferenceEngine\obj\Debug\InferenceEngine.pdb
 C:\Users\jaeha\Documents\Swinburne\Intro to AI\Assignment2\InferenceEngine\InferenceEngine\obj\Debug\InferenceEngine.csprojResolveAssemblyReference.cache
+C:\Users\jaeha\Documents\Swinburne\Intro to AI\AI_Assignment2\InferenceEngine\InferenceEngine\obj\Debug\InferenceEngine.csprojResolveAssemblyReference.cache
+C:\Users\jaeha\Documents\Swinburne\Intro to AI\AI_Assignment2\InferenceEngine\InferenceEngine\obj\Debug\InferenceEngine.exe
+C:\Users\jaeha\Documents\Swinburne\Intro to AI\AI_Assignment2\InferenceEngine\InferenceEngine\obj\Debug\InferenceEngine.pdb
+C:\Users\jaeha\Documents\Swinburne\Intro to AI\AI_Assignment2\InferenceEngine\InferenceEngine\bin\Debug\InferenceEngine.exe.config
+C:\Users\jaeha\Documents\Swinburne\Intro to AI\AI_Assignment2\InferenceEngine\InferenceEngine\bin\Debug\InferenceEngine.exe
+C:\Users\jaeha\Documents\Swinburne\Intro to AI\AI_Assignment2\InferenceEngine\InferenceEngine\bin\Debug\InferenceEngine.pdb

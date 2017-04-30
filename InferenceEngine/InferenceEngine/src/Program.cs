@@ -11,18 +11,19 @@ namespace InferenceEngine.src
         static void Main(string[] args)
         {
             KnowledgeBase KB = new KnowledgeBase();
-            KB.Interpret("p2 => p3; p3 => p1; c => e; b & e => f; f & g => h; p1 => d; p1 & p3 => c; a; b; p2;");
+            KB.Interpret("a&b=>c; a; b");
             
             foreach (Statement o in KB.World)
             {
                 Console.WriteLine(o.Identifier);
             }
 
-            Console.WriteLine("Is Consictent: " + KB.CheckConsistency());
-            
+            Console.WriteLine("Is Consictent: " + KB.CheckConsistency());            
 
-            //TruthTable tt = new TruthTable(KB.World);
-            //tt.WriteTable();
+            TruthTable tt = new TruthTable(KB.World);
+            tt.WriteTable();
+
+
             Console.ReadKey();
 
         }

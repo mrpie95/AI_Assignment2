@@ -55,7 +55,19 @@ namespace InferenceEngine.src
 
                 i += 1;
             }
+        }
 
+        public override bool Contains(string ID)
+        {
+            foreach (Statement s in _statements)
+            {
+                if(s.Contains(ID))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

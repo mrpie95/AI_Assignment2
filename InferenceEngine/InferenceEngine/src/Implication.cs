@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace InferenceEngine.src
+﻿namespace InferenceEngine.src
 {
     class Implication : Statement
     {
@@ -35,6 +29,21 @@ namespace InferenceEngine.src
         {
             _statementA = A;
             _statementB = B;
+        }
+
+        public override bool Contains(string ID)
+        {
+            if (_statementA.Contains(ID))
+            {
+                return true;
+            }
+
+            if (_statementB.Contains(ID))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

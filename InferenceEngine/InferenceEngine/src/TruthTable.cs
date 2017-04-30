@@ -10,79 +10,127 @@ namespace InferenceEngine.src
     {
         private List<Statement> _labels = new List<Statement>();
         private List<bool[]> _values = new List<bool[]>();
-        private int _columnWidth;
+        private int _numberRows;
 
         public TruthTable(Statement[] labels)
         {
             foreach (Statement s in labels)
             {
                 _labels.Add(s);
+                _values.Add(new bool[] { });
             }
-        }
 
-        public void populate()
+            this.OrderAssertions();
+            this.OrderDependancies();
+
+            this.Populate();
+        }
+        
+        public void Populate()
         {
-            int depth = 0;
+            _values.Clear();
+
+            _numberRows = 1;
             foreach (Statement s in _labels)
             {
+                //solve for number of rows
                 if ((s as Assertion) != null)
                 {
-                    Assertion a = (s as Assertion);
-                    if (a.Defined)
+                    if (!(s as Assertion).Defined)
                     {
-                        //only one permiatation exists 2^0
-                        depth += 1;
-                    }
-
-                    else
-                    {
-                        //2^1
-                        depth += 2;
+                        _numberRows *= 2;
                     }
                 }
+            }
 
-                int i = 0;
-                while(i < _values.Count)
+            int i = 0;
+            while (i < _labels.Count)
+            {
+                _values.Add(new bool[_numberRows]);
+                i += 1;
+            }
+
+            //booleans created before here
+
+            //Assertions
+            int flipDepth = 1;
+
+            i = _labels.Count - 1;
+
+            while(i >= 0)
+            {
+                bool setTo = false;
+                bool increaseFlipSize = false;
+
+                if (((_labels[i] as Assertion) != null))
                 {
-                    _values[i] = new bool[depth];                    
+                    Assertion a = (_labels[i] as Assertion);
 
-                    i += 1;
-                }
-
-                i = _values.Count - 1;
-                while (i >= 0)
-                {
-                    //gap between toggling
-                    int gap = 1;
                     int j = 0;
-
-                    if (((_labels[i] as Assertion) != null) && (_labels[i] as Assertion).Defined)
+                    while (j < _numberRows)
                     {
-                        //pre defined assertions
-                        j = 0;
-                        while (j < depth)
+                        if (a.Defined)
                         {
-                            _values[i][j] = _labels[i].IsTrue
-                            j += 1;
+                            _values[i][j] = a.IsTrue;
                         }
-                    }
 
-                    else
-                    {
-                        //standard initial state
-
-                        j = 0;
-                        while (j < depth)
+                        else
                         {
-                            _values[i][j] = !_values[i][j - 1];
+                            increaseFlipSize = true;
+                            _values[i][j] = setTo;
 
-                            j += 1;
+                            if (j % flipDepth == flipDepth - 1)
+                            {
+                                setTo = !setTo;
+                            }
                         }
+                        j += 1;
                     }
-
-                    i -= 1;
                 }
 
+                if (increaseFlipSize)
+                {
+                    flipDepth *= 2;
+                    increaseFlipSize = false;
+                }
+
+                i -= 1;
+            }
+
+            //Fill composites
+            
+            i = 0;
+            while (i < _numberRows)
+            {
+                int j = 0;
+                while(j < _labels.Count)
+                {
+                    Assertion a = (_labels[j] as Assertion);
+
+                    if ( a != null)
+                    {
+                        if (!a.Defined)
+                        {
+                            a.SetValue(_values[j][i]);
+                        }
+                    }
+
+                    j += 1;
+                }
+
+                //Assertions set
+                j = 0;
+                while (j < _labels.Count)
+                {
+                    if ((_labels[j] as Assertion) == null)
+                    {
+                        _values[j][i] = _labels[j].IsTrue;
+                    }
+
+                    j += 1;
+                }
+
+                i += 1;
             }
         }
 
@@ -98,14 +146,39 @@ namespace InferenceEngine.src
                 i += 1;
             }
 
+            Console.WriteLine();
+
             i = 0;
-            while (i < _labels.Count)
+            while (i < _numberRows)
             {
                 int j = 0;
-                while(j < _values[i].Length)
+                while(j < _labels.Count)
                 {
+                    int leftBuffer = 0, rightBuffer = 0;
+
+                    int tempSize = _labels[j].Identifier.Length - 1;
+
+                    if (tempSize % 2 == 0)
+                    {
+                        leftBuffer = tempSize / 2;
+                        rightBuffer = tempSize / 2;
+                    }
+
+                    else
+                    {
+                        leftBuffer = tempSize / 2 + 1; // left gets the left overs
+                        rightBuffer = tempSize / 2;
+                    }
+
                     Console.Write("[");
-                    if (_values[i][j])
+
+                    while (leftBuffer > 0)
+                    {
+                        Console.Write(" ");
+                        leftBuffer -= 1;
+                    }
+
+                    if (_values[j][i])
                     {
                         Console.Write("1");
                     }
@@ -114,12 +187,130 @@ namespace InferenceEngine.src
                     {
                         Console.Write("0");
                     }
+
+                    while (rightBuffer > 0)
+                    {
+                        Console.Write(" ");
+                        rightBuffer -= 1;
+                    }
+
                     Console.Write("]");
                     j += 1;
                 }
 
+                Console.WriteLine();
+
                 i += 1;
             }
         }
+
+        public void OrderAssertions()
+        {
+            int i = 0;
+            while (i < _labels.Count)
+            {
+                bool repeat = false;
+                int j = i + 1;
+
+                while (j < _labels.Count)
+                {
+                    if ((_labels[i] as Assertion) != null)
+                    {
+                        if ((_labels[i] as Assertion).Defined)
+                        {
+                            repeat = false;
+                            break;
+                        }
+
+                        else
+                        {
+                            if ((_labels[j] as Assertion) != null)
+                            {
+                                if ((_labels[j] as Assertion).Defined)
+                                {
+                                    this.Swap(i, j);
+
+                                    repeat = true;
+                                    break;
+                                }
+
+                                else
+                                {
+                                    //do nothing, equal priority
+                                }
+                            }
+
+                            else
+                            {
+                                if ((_labels[j] as Assertion) != null)
+                                {
+                                    this.Swap(i, j);
+
+                                    repeat = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    else
+                    {
+                        if ((_labels[j] as Assertion) !=  null)
+                        {
+                            this.Swap(i, j);
+
+                            repeat = true;
+                            break;
+                        }
+                    }
+
+                    j += 1;
+                }
+
+                if (!repeat)
+                {
+                    i += 1;
+                }
+            }
+        }
+
+        public void OrderDependancies()
+        {
+            int i = 0;
+            while (i < _labels.Count)
+            {
+                bool repeat = false;
+                int j = i + 1;
+
+                while (j < _labels.Count)
+                {
+                    if (_labels[i].Contains(_labels[j].Identifier))
+                    {
+                        this.Swap(i, j);
+
+                        repeat = true;
+                        break;
+                    }
+
+                    j += 1;
+                }
+
+                if (!repeat)
+                {
+                    i += 1;
+                }
+            }
+        }
+
+        public void Swap(int i, int j)
+        {
+            Statement tempS = _labels[i];
+            _labels[i] = _labels[j];
+            _labels[j] = tempS;
+
+            bool[] tempB = _values[i];
+            _values[i] = _values[j];
+            _values[j] = tempB;
+        }       
     }
 }

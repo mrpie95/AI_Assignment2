@@ -42,5 +42,15 @@ namespace InferenceEngine.src
 
             return false;
         }
+
+        public override bool Contains(string ID)
+        {
+            if (ID == this.Identifier)
+            {
+
+            }
+
+            return false;
+        }
     }
 }
