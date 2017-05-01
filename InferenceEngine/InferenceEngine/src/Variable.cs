@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InferenceEngine.src
 {
-    class Assertion : Statement
+    class Variable : Statement
     {
         private bool _value;
 
@@ -25,7 +25,7 @@ namespace InferenceEngine.src
             set;
         }
 
-        public Assertion(string identifier, bool initialAssertion) : base(identifier)
+        public Variable(string identifier, bool initialAssertion) : base(identifier)
         {
             _value = initialAssertion;
             this.Defined = false;

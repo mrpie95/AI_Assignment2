@@ -199,17 +199,17 @@ namespace InferenceEngine.src
                 return created;
             }
 
-            //Assertion section
+            //Variables section
             //Default
-            //all assertions live in the _world
+            //all variables live in the _world
 
-            //search for assertions of the same name
+            //search for variables of the same name
 
             foreach (Statement s in _world)
             {
-                if ((s as Assertion) != null)
+                if ((s as Variable) != null)
                 {
-                    Assertion a = (s as Assertion);
+                    Variable a = (s as Variable);
 
                     if (a.Identifier == input)
                     {
@@ -224,9 +224,9 @@ namespace InferenceEngine.src
                 }
             }
 
-            // if the assertion dosn't yet exist
+            // if the variable dosn't yet exist
 
-            Assertion asserted = new Assertion(input, false);
+            Variable asserted = new Variable(input, false);
 
             _world.Add(asserted);
 

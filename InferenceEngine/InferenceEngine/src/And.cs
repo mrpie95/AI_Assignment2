@@ -48,7 +48,7 @@ namespace InferenceEngine.src
             {
                 if (i > 0)
                 {
-                    this.Identifier += " " + And.Symbol + " ";
+                    this.Identifier += And.Symbol;
                 }
 
                 this.Identifier += _statements[i].Identifier;

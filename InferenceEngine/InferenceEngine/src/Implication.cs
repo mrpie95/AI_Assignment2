@@ -25,7 +25,7 @@
             }
         }
 
-        public Implication(Statement A, Statement B) : base(A.Identifier + " " + Implication.Symbol + " " + B.Identifier)
+        public Implication(Statement A, Statement B) : base(A.Identifier + Implication.Symbol + B.Identifier)
         {
             _statementA = A;
             _statementB = B;
