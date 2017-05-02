@@ -52,11 +52,14 @@ namespace InterfaceEngine_GUI
 
         private void submitAttribute()
         {
-            attributesString += addAttribute.Text + ";\n";
-            addAttribute.Text = "";
-            attributes.Text = attributesString;
-            attributes.SelectionStart = attributesString.Length;
-            //attributes.ScrollToCaret();
+            if ((addAttribute.Text != "") && !(addAttribute.Text.StartsWith(" ")))
+            {
+                attributesString += addAttribute.Text + ";\n";
+                addAttribute.Text = "";
+                attributes.Text = attributesString;
+                attributes.SelectionStart = attributesString.Length;
+                //attributes.ScrollToCaret();
+            }
         }
 
         private void TextBox_KeyUp(object sender, KeyEventArgs e)
@@ -86,11 +89,7 @@ namespace InterfaceEngine_GUI
      
         private void Button_Click_Attribute(object sender, RoutedEventArgs e)
         {
-            attributesString += addAttribute.Text + ";\n";
-            addAttribute.Text = "";
-            attributes.Text = attributesString;
-            attributes.SelectionStart = attributesString.Length;
-            //attributes.ScrollToCaret();
+            submitAttribute();
         }
     }
 }
