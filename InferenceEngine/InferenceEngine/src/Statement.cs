@@ -27,6 +27,8 @@ namespace InferenceEngine.src
 
         public abstract bool Contains(string ID);
 
+        public abstract bool DependsOn(string ID);
+
         public override string ToString()
         {
             return this.Identifier + " is: " + this.IsTrue;

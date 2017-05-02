@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace InferenceEngine.src
 {
-    enum Result {Valid, Neither, Unsatisfiable};
+    enum AssertionEnum {Assertion, Query};
 }

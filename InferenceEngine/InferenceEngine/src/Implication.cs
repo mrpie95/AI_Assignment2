@@ -45,5 +45,15 @@
 
             return false;
         }
+
+        public override bool DependsOn(string ID)
+        {
+            if (_statementA.Contains(ID))
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

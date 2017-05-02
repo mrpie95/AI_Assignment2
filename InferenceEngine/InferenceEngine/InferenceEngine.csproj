@@ -43,6 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\And.cs" />
+    <Compile Include="src\AssertionEnum.cs" />
+    <Compile Include="src\ChainNode.cs" />
+    <Compile Include="src\ForwardChain.cs" />
     <Compile Include="src\Variable.cs" />
     <Compile Include="src\Implication.cs" />
     <Compile Include="src\KnowledgeBase.cs" />

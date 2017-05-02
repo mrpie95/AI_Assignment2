@@ -8,7 +8,9 @@ namespace InferenceEngine.src
 { 
     class KnowledgeBase
     {
-        private List<Statement> _world = new List<Statement>();
+        private List<Statement> _assertions = new List<Statement>();
+        private List<Statement> _queries = new List<Statement>();
+        private List<Statement> _universe = new List<Statement>();
 
         public static string Delimiter
         {
@@ -18,11 +20,27 @@ namespace InferenceEngine.src
             }
         }
 
-        public Statement[] World
+        public Statement[] Assertions
         {
             get
             {
-                return _world.ToArray();
+                return _assertions.ToArray();
+            }
+        }
+
+        public Statement[] Queries
+        {
+            get
+            {
+                return _queries.ToArray();
+            }
+        }
+
+        public Statement[] Universe
+        {
+            get
+            {
+                return _universe.ToArray();
             }
         }
 
@@ -114,129 +132,163 @@ namespace InferenceEngine.src
             return result.ToArray();
         }
 
-        public void Interpret(string input)
+        public void Interpret(string input, AssertionEnum isAssertion)
         {
             List<string> stats = new List<string>(KnowledgeBase.DelimitString(input, new string[] { KnowledgeBase.Delimiter }, new string[] { " " }));
 
-            foreach (string s in stats)
+            if (isAssertion == AssertionEnum.Assertion)
             {
-                this.GenerateStatement(s, 0);
-            }
-        }
-
-        private Statement GenerateStatement(string input, int depth)
-        {
-            //The order these sections are placed implies the order of logical operations
-
-            string[] deconstruction;
-
-            //Implication section
-            deconstruction = KnowledgeBase.DelimitString(input, new string[] { Implication.Symbol }, new string[] { });
-
-            //if 1 string is returned the string did not contain the delimitor
-            if (deconstruction.Length > 1)
-            {
-                if (deconstruction.Length > 2)
+                foreach (string s in stats)
                 {
-                    throw new Exception("Implication format failure");
-                }
+                    Statement stat = this.GenerateStatement(s);
 
-                List<Statement> localWorld = new List<Statement>();
-                foreach (string s in deconstruction)
-                {
-                    localWorld.Add(this.GenerateStatement(s, depth + 1));
-                }
-
-                Statement created = new Implication(localWorld[0], localWorld[1]);
-
-                if (depth == 0)
-                {
-                    _world.Add(created);
-                }
-
-                return created;
-            }
-
-            //And section
-            deconstruction = KnowledgeBase.DelimitString(input, new string[] { And.Symbol }, new string[] { });
-
-            if (deconstruction.Length > 1)
-            {
-                List<Statement> localWorld = new List<Statement>();
-                foreach (string s in deconstruction)
-                {
-                    localWorld.Add(this.GenerateStatement(s, depth + 1));
-                }
-
-                Statement created = new And(localWorld.ToArray());
-
-                if (depth == 0)
-                {
-                    _world.Add(created);
-                }
-
-                return created;
-            }
-
-            //Or section
-            deconstruction = KnowledgeBase.DelimitString(input, new string[] { Or.Symbol }, new string[] { });
-
-            if (deconstruction.Length > 1)
-            {
-                List<Statement> localWorld = new List<Statement>();
-                foreach (string s in deconstruction)
-                {
-                    localWorld.Add(this.GenerateStatement(s, depth + 1));
-                }
-
-                Statement created = new Or(localWorld.ToArray());
-
-                if (depth == 0)
-                {
-                    _world.Add(created);
-                }
-
-                return created;
-            }
-
-            //Variables section
-            //Default
-            //all variables live in the _world
-
-            //search for variables of the same name
-
-            foreach (Statement s in _world)
-            {
-                if ((s as Variable) != null)
-                {
-                    Variable a = (s as Variable);
-
-                    if (a.Identifier == input)
+                    if ((stat as Variable) != null)
                     {
-                        if (depth == 0)
-                        {
-                            a.SetValue(true);
-                            a.Defined = true;
-                        }
+                        (stat as Variable).SetValue(true);
+                        (stat as Variable).Defined = true;
+                    }
 
-                        return a;
+                    bool found = false;
+
+                    foreach (Statement statments in _assertions)
+                    {
+                        if (statments.Identifier == stat.Identifier)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found)
+                    {
+                        _assertions.Add(stat);
                     }
                 }
             }
 
-            // if the variable dosn't yet exist
+            else if(isAssertion == AssertionEnum.Query)
+            {
+                foreach (string s in stats)
+                {
+                    Statement stat = this.GenerateStatement(s);
 
-            Variable asserted = new Variable(input, false);
+                    //can't set query variables
 
-            _world.Add(asserted);
+                    bool found = false;
 
-            if (depth == 0)
-             {
-                 asserted.SetValue(true);
-                 asserted.Defined = true;
-             }
+                    foreach (Statement statments in _queries)
+                    {
+                        if (statments.Identifier == stat.Identifier)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
 
-             return asserted;
+                    if (!found)
+                    {
+                        _queries.Add(stat);
+                    }
+                }
+            }
+        }
+
+        private Statement GenerateStatement(string input)
+        {
+            //The order these sections are placed implies the order of logical operations
+
+            string[] deconstruction;
+            Statement created = null;
+
+            if (created == null)
+            {
+                //Implication section
+                deconstruction = KnowledgeBase.DelimitString(input, new string[] { Implication.Symbol }, new string[] { });
+
+                //if 1 string is returned the string did not contain the delimitor
+                if (deconstruction.Length > 1)
+                {
+                    if (deconstruction.Length > 2)
+                    {
+                        throw new Exception("Implication format failure");
+                    }
+
+                    List<Statement> localWorld = new List<Statement>();
+                    foreach (string s in deconstruction)
+                    {
+                        localWorld.Add(this.GenerateStatement(s));
+                    }
+
+                    created = new Implication(localWorld[0], localWorld[1]);
+                }
+            }
+
+            if (created == null)
+            {
+                //And section
+                deconstruction = KnowledgeBase.DelimitString(input, new string[] { And.Symbol }, new string[] { });
+
+                if (deconstruction.Length > 1)
+                {
+                    List<Statement> localWorld = new List<Statement>();
+                    foreach (string s in deconstruction)
+                    {
+                        localWorld.Add(this.GenerateStatement(s));
+                    }
+
+                    created = new And(localWorld.ToArray());
+                }
+            }
+
+            if (created == null)
+            {
+                //Or section
+                deconstruction = KnowledgeBase.DelimitString(input, new string[] { Or.Symbol }, new string[] { });
+
+                if (deconstruction.Length > 1)
+                {
+                    List<Statement> localWorld = new List<Statement>();
+                    foreach (string s in deconstruction)
+                    {
+                        localWorld.Add(this.GenerateStatement(s));
+                    }
+
+                    created = new Or(localWorld.ToArray());
+                }
+            }
+
+            //Variables section
+
+            if (created == null)
+            {
+                created = new Variable(input, false);
+            }
+
+            //search for statements with the same identifier
+
+            if (created == null)
+            {
+                throw new Exception(input + " not understood");
+            }
+
+            bool found = false;
+
+            foreach (Statement s in _universe)
+            {
+                if (s.Identifier == created.Identifier)
+                {
+                    created = s;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                _universe.Add(created);
+            }
+
+            return created;
         }
 
         public bool CheckConsistency()
@@ -244,13 +296,14 @@ namespace InferenceEngine.src
             bool result = true;
 
             int i = 0;
-            while(i < _world.Count)
+            while(i < _universe.Count)
             {
                 int j = i + 1;
-                while(j < _world.Count)
+                while(j < _universe.Count)
                 {
-                    if (_world[i].Identifier == _world[j].Identifier)
+                    if (_universe[i].Identifier == _universe[j].Identifier)
                     {
+                        Console.WriteLine(_universe[i].Identifier + " found at [" + i + ", " + j + "]");
                         result = false;
                         return result;
                     }
