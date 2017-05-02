@@ -1,0 +1,36 @@
+﻿<Window x:Class="InterfaceEngine_GUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InterfaceEngine_GUI"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="420.492" Width="359.645">
+    <Grid Margin="0,0,-8,-5">
+        <TabControl HorizontalAlignment="Left" Height="394" VerticalAlignment="Top" Width="350">
+            <TabItem Header="Arguments">
+                <Grid Background="White" Margin="0,0,-4,4">
+                    <TextBox x:Name="addAttribute" HorizontalAlignment="Center" Height="29" Margin="49,31,89,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="210" KeyUp="TextBox_KeyUp" VerticalScrollBarVisibility="Auto"/>
+                    <Label Content="Add Attributes" HorizontalAlignment="Left" Margin="49,5,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="attributes" HorizontalAlignment="Center" Height="188" Margin="49,99,49,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="250" KeyUp="TextBox_KeyUp" VerticalScrollBarVisibility="Auto"/>
+                    <Button x:Name="btnGenKB" Content="Generate Knowledge Base" HorizontalAlignment="Left" Margin="49,304,0,0" VerticalAlignment="Top" Width="148" Click="Button_Click_Gen" Background="WhiteSmoke"/>
+                    <Button x:Name="btnClearKB" Content="Clear" HorizontalAlignment="Left" Margin="224,304,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_Clear" Background="#FFFF5858"/>
+                    <Button Content="&gt;" HorizontalAlignment="Left" Margin="264,31,0,0" VerticalAlignment="Top" Width="35" Height="29" Click="Button_Click_Attribute" Background="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"/>
+                </Grid>
+
+            </TabItem>
+            <TabItem Header="Truth Table">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="Forward Chain">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="Backward Chain">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+        </TabControl>
+
+
+
+    </Grid>
+</Window>
