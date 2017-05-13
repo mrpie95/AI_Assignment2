@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace InterfaceEngine_GUI
 {
@@ -20,48 +13,102 @@ namespace InterfaceEngine_GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        String attributesString = "";
+        private static String attributesString = "";
+        private static KnowledgeBase KB;
+        private static TruthTable tt;
 
         public MainWindow()
         {
             InitializeComponent();
-
-
-            KnowledgeBase KB = new KnowledgeBase();
-            KB.Interpret("p2=> p3; p3 => p1; c => e; b&e => f; f&g => h; p1=>d; p1&p3 => c; a; b; p2;");
-
-            /*foreach (Statement o in KB.World)
-            {
-                Console.WriteLine(o.Identifier);
-            }
-
-            Console.WriteLine("Is Consictent: " + KB.CheckConsistency());      */
-
-            /*TruthTable tt = new TruthTable(KB.World);
-            tt.WriteTable();
-            Console.WriteLine(tt.Query("c=>e"));
-
-            Console.WriteLine("\n\n"); */
-
-            //tt.clean();
-            //tt.writetable();
-            //console.writeline(tt.query("c=>e"));
-
-            //Console.ReadKey();
+            InitialiseUI();   
         }
 
+        public void InitialiseUI()
+        {
+            this.Height = 420;
+        }
+
+        //prints the GUI table (sorry for the mess)
+        private void printTable()
+        {
+            List<Statement> statements = tt.Statements;
+            List<List<bool>> values = tt.Assertions;
+
+            var table = new DataTable();
+            table.Columns.Add(new DataColumn("TruthTable"));
+
+            //range the size of the number of statements
+            int rowRange;
+
+            if ((statements.Count - 1) < 0)
+                rowRange = 0;
+            else
+                rowRange = (statements.Count - 1);
+
+            table.Columns.AddRange(Enumerable.Range(1, rowRange).Select(i => new DataColumn(i.ToString())).ToArray());
+            DataRow row = table.NewRow();
+
+            int x = 0;
+            foreach (Statement s in statements)
+            {
+                row[x] = s.Identifier;
+                x++;
+            }
+            table.Rows.Add(row);
+        
+            row = table.NewRow();
+            if (tt.Assertions.Count > 0 )
+            {
+                for (int l = 0; l < values[0].Count; l++)
+                {
+                    row = table.NewRow();
+                    for (int k = 0; k < values.Count; k++)
+                    {
+                        bool temp = values[k][l];
+
+                        if (temp)
+                            row[k] = "1";
+                        else
+                            row[k] = "0";
+                    }
+                    table.Rows.Add(row);
+                }
+            }
+            DataContext = table;
+        }
+
+        //generates knowledge base and truth table
+        private void generateData()
+        {
+                KB = new KnowledgeBase();
+                //KB.Interpret("p2=> p3; p3 => p1; c => e; b&e => f; f&g => h; p1=>d; p1&p3 => c; a; b; p2;");
+                KB.Interpret(attributesString);
+                tt = new TruthTable(KB.World);
+                printTable();
+        }
+
+        //button event handlers 
         private void submitAttribute()
         {
             if ((addAttribute.Text != "") && !(addAttribute.Text.StartsWith(" ")))
             {
-                attributesString += addAttribute.Text + ";\n";
+                attributesString += addAttribute.Text + "; ";              
+                attributes.Text += addAttribute.Text+";\n";
                 addAttribute.Text = "";
-                attributes.Text = attributesString;
                 attributes.SelectionStart = attributesString.Length;
-                //attributes.ScrollToCaret();
             }
         }
 
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TT.IsSelected)
+                this.Height = 600;
+            else 
+                this.Height = 420;
+
+        }
+
+        //event checking for enter key
         private void TextBox_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -69,27 +116,28 @@ namespace InterfaceEngine_GUI
                 submitAttribute();
             }
         }
-
-        private void InitialiseUI()
-        {
-            
-        }
-
+     
+        //event for generate button
         private void Button_Click_Gen(object sender, RoutedEventArgs e)
         {
-
+            generateData(); 
         }
 
+        //event that clears the data from the entry fields
         private void Button_Click_Clear(object sender, RoutedEventArgs e)
         {
             attributesString = "";
             attributes.Text = attributesString;
+            generateData();
         }
-
      
         private void Button_Click_Attribute(object sender, RoutedEventArgs e)
         {
             submitAttribute();
         }
+
+        //required as part of using a datagrif object
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        { }
     }
 }

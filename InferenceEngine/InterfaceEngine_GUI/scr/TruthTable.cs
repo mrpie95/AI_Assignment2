@@ -25,6 +25,16 @@ namespace InterfaceEngine_GUI
 
             this.Populate();
         }
+
+        public List<Statement> Statements
+        {
+            get { return _assertions; }
+        }
+
+        public List<List<bool>> Assertions
+        {
+            get { return _values; }
+        }
         
         public void Populate()
         {
