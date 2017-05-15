@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace InterfaceEngine_GUI
 {
-    enum Result {Valid, Neither, Unsatisfiable};
+    enum AssertionEnum {Assertion, Query};
 }

@@ -28,6 +28,36 @@ namespace InterfaceEngine_GUI
             this.Height = 420;
         }
 
+        public void RunConsoleOutput()
+        {
+            KB = new KnowledgeBase();
+            KB.Interpret("p2=> p3; p3 => p1; c => e; b&e => f; f&g => h; p1=>d; p1&p3 => c; a; b; p2;", AssertionEnum.Assertion);
+
+            string query = "d;";
+            KB.Interpret(query, AssertionEnum.Query);
+
+            tt = new TruthTable(KB);
+
+            tt.WriteTable();
+
+            string[] arr = KnowledgeBase.DelimitString(query, new string[] { KnowledgeBase.Delimiter }, new string[] { " " });
+
+            foreach (string s in arr)
+            {
+                if (tt.Query(s) == Result.Valid)
+                {
+                    Console.WriteLine("YES: " + tt.Rows);
+                }
+
+                else
+                {
+                    Console.WriteLine("NO");
+                }
+            }
+
+            Console.ReadKey();
+        }
+
         //prints the GUI table (sorry for the mess)
         private void printTable()
         {
@@ -82,8 +112,8 @@ namespace InterfaceEngine_GUI
         {
                 KB = new KnowledgeBase();
                 //KB.Interpret("p2=> p3; p3 => p1; c => e; b&e => f; f&g => h; p1=>d; p1&p3 => c; a; b; p2;");
-                KB.Interpret(attributesString);
-                tt = new TruthTable(KB.World);
+                KB.Interpret(attributesString, AssertionEnum.Assertion);
+                tt = new TruthTable(KB);
                 printTable();
         }
 

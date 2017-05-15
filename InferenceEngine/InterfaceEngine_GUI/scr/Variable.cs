@@ -52,5 +52,10 @@ namespace InterfaceEngine_GUI
 
             return false;
         }
+
+        public override bool DependsOn(string ID)
+        {
+            return false;
+        }
     }
 }

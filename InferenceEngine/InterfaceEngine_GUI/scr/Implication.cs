@@ -1,4 +1,6 @@
-﻿namespace InterfaceEngine_GUI
+﻿
+
+namespace InterfaceEngine_GUI
 {
     class Implication : Statement
     {
@@ -39,6 +41,16 @@
             }
 
             if (_statementB.Contains(ID))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public override bool DependsOn(string ID)
+        {
+            if (_statementA.Contains(ID))
             {
                 return true;
             }

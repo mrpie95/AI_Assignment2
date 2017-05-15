@@ -54,6 +54,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="scr\And.cs" />
+    <Compile Include="scr\AssertionEnum.cs" />
+    <Compile Include="scr\ChainNode.cs" />
+    <Compile Include="scr\ForwardChain.cs" />
+    <Compile Include="scr\Implication.cs" />
+    <Compile Include="scr\KnowledgeBase.cs" />
+    <Compile Include="scr\Or.cs" />
+    <Compile Include="scr\Program.cs" />
     <Compile Include="scr\Result.cs" />
     <Compile Include="scr\Statement.cs" />
     <Compile Include="scr\TruthTable.cs" />
@@ -62,20 +70,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="scr\And.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="scr\Implication.cs" />
-    <Compile Include="scr\KnowledgeBase.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="scr\Or.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -8,32 +8,101 @@ namespace InterfaceEngine_GUI
 {
     class TruthTable
     {
-        private List<Statement> _assertions = new List<Statement>();
+        private List<Statement> _labels = new List<Statement>();
+        private KnowledgeBase _kB;
         private List<List<bool>> _values = new List<List<bool>>();
         private int _numberRows;
 
-        public TruthTable(Statement[] labels)
+        public int Rows
         {
-            foreach (Statement s in labels)
+            get
             {
-                _assertions.Add(s);
-                _values.Add(new List<bool> ());
+                return _numberRows;
+            }
+        }
+
+        public List<Statement> Statements
+        {
+            get { return _labels; }
+        }
+
+        public List<List<bool>> Assertions
+        {
+            get { return _values; }
+        }
+
+        public TruthTable(KnowledgeBase kB)
+        {
+            _kB = kB;
+            
+            //add in assertions specifically
+            foreach (Statement s in _kB.Assertions)
+            {
+                bool found = false;
+                foreach (Statement stat in _labels)
+                {
+                    if (stat.Identifier == s.Identifier)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    _labels.Add(s);
+                    _values.Add(new List<bool>());
+                }
+            }
+
+            //load in queries specifically
+            foreach (Statement s in kB.Queries)
+            {
+                bool found = false;
+                foreach (Statement stat in _labels)
+                {
+                    if (stat.Identifier == s.Identifier)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    _labels.Add(s);
+                    _values.Add(new List<bool>());
+                }
+            }
+            
+            foreach (Statement s in kB.Universe)
+            {
+                if ((s as Variable) != null)
+                {
+                    bool found = false;
+                    foreach (Statement stat in _labels)
+                    {
+                        if (stat.Identifier == s.Identifier)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found)
+                    {
+                        _labels.Add(s);
+                        _values.Add(new List<bool>());
+                    }
+                }
             }
 
             this.OrderVariables();
             this.OrderDependancies();
 
             this.Populate();
-        }
 
-        public List<Statement> Statements
-        {
-            get { return _assertions; }
-        }
-
-        public List<List<bool>> Assertions
-        {
-            get { return _values; }
+            this.Clean();
         }
         
         public void Populate()
@@ -41,7 +110,7 @@ namespace InterfaceEngine_GUI
             _values.Clear();
 
             _numberRows = 1;
-            foreach (Statement s in _assertions)
+            foreach (Statement s in _labels)
             {
                 //solve for number of rows
                 if ((s as Variable) != null)
@@ -54,7 +123,7 @@ namespace InterfaceEngine_GUI
             }
 
             int i = 0;
-            while (i < _assertions.Count)
+            while (i < _labels.Count)
             {
                 _values.Add(new List<bool> (_numberRows));
 
@@ -73,16 +142,16 @@ namespace InterfaceEngine_GUI
             //Assertions
             int flipDepth = 1;
 
-            i = _assertions.Count - 1;
+            i = _labels.Count - 1;
 
             while(i >= 0)
             {
                 bool setTo = false;
                 bool increaseFlipSize = false;
 
-                if (((_assertions[i] as Variable) != null))
+                if (((_labels[i] as Variable) != null))
                 {
-                    Variable a = (_assertions[i] as Variable);
+                    Variable a = (_labels[i] as Variable);
 
                     int j = 0;
                     while (j < _numberRows)
@@ -121,9 +190,9 @@ namespace InterfaceEngine_GUI
             while (i < _numberRows)
             {
                 int j = 0;
-                while(j < _assertions.Count)
+                while(j < _labels.Count)
                 {
-                    Variable a = (_assertions[j] as Variable);
+                    Variable a = (_labels[j] as Variable);
 
                     if ( a != null)
                     {
@@ -136,13 +205,13 @@ namespace InterfaceEngine_GUI
                     j += 1;
                 }
 
-                //Assertions set
+                //Assertions have been set
                 j = 0;
-                while (j < _assertions.Count)
+                while (j < _labels.Count)
                 {
-                    if ((_assertions[j] as Variable) == null)
+                    if ((_labels[j] as Variable) == null)
                     {
-                        _values[j][i] = _assertions[j].IsTrue;
+                        _values[j][i] = _labels[j].IsTrue;
                     }
 
                     j += 1;
@@ -158,23 +227,38 @@ namespace InterfaceEngine_GUI
         public void Clean()
         {
             int i = 0;
-            while (i < _assertions.Count)            
+            while (i < _labels.Count)            
             {
-                if ((_assertions[i] as Variable) == null)
+                if ((_labels[i] as Variable) == null)
                 {
-                    int j = 0;
-                    while (j < _numberRows)
+                    bool found = false;
+                    int k = 0;
+                    while (k < _kB.Assertions.Length)
                     {
-                        if (!_values[i][j])
+                        if (_labels[i] == _kB.Assertions[k])
                         {
-                            this.RemoveRow(j);
+                            found = true;
+                            break;
                         }
-
-                        else
-                        {
-                            j += 1;
-                        }
+                        k += 1;
                     }
+
+                    if (found)
+                    {
+                        int j = 0;
+                        while (j < _numberRows)
+                        {
+                            if (!_values[i][j])
+                            {
+                                this.RemoveRow(j);
+                            }
+
+                            else
+                            {
+                                j += 1;
+                            }
+                        }
+                    }                    
                 }
 
                 i += 1;
@@ -184,10 +268,10 @@ namespace InterfaceEngine_GUI
         public void WriteTable()
         {
             int i = 0;
-            while(i < _assertions.Count)
+            while(i < _labels.Count)
             {
                 Console.Write("[");
-                Console.Write(_assertions[i].Identifier);
+                Console.Write(_labels[i].Identifier);
                 Console.Write("]");
 
                 i += 1;
@@ -199,11 +283,11 @@ namespace InterfaceEngine_GUI
             while (i < _numberRows)
             {
                 int j = 0;
-                while(j < _assertions.Count)
+                while(j < _labels.Count)
                 {
                     int leftBuffer = 0, rightBuffer = 0;
 
-                    int tempSize = _assertions[j].Identifier.Length - 1;
+                    int tempSize = _labels[j].Identifier.Length - 1;
 
                     if (tempSize % 2 == 0)
                     {
@@ -254,16 +338,16 @@ namespace InterfaceEngine_GUI
         public void OrderVariables()
         {
             int i = 0;
-            while (i < _assertions.Count)
+            while (i < _labels.Count)
             {
                 bool repeat = false;
                 int j = i + 1;
 
-                while (j < _assertions.Count)
+                while (j < _labels.Count)
                 {
-                    if ((_assertions[i] as Variable) != null)
+                    if ((_labels[i] as Variable) != null)
                     {
-                        if ((_assertions[i] as Variable).Defined)
+                        if ((_labels[i] as Variable).Defined)
                         {
                             repeat = false;
                             break;
@@ -271,9 +355,9 @@ namespace InterfaceEngine_GUI
 
                         else
                         {
-                            if ((_assertions[j] as Variable) != null)
+                            if ((_labels[j] as Variable) != null)
                             {
-                                if ((_assertions[j] as Variable).Defined)
+                                if ((_labels[j] as Variable).Defined)
                                 {
                                     this.Swap(i, j);
 
@@ -289,7 +373,7 @@ namespace InterfaceEngine_GUI
 
                             else
                             {
-                                if ((_assertions[j] as Variable) != null)
+                                if ((_labels[j] as Variable) != null)
                                 {
                                     this.Swap(i, j);
 
@@ -302,7 +386,7 @@ namespace InterfaceEngine_GUI
 
                     else
                     {
-                        if ((_assertions[j] as Variable) !=  null)
+                        if ((_labels[j] as Variable) !=  null)
                         {
                             this.Swap(i, j);
 
@@ -324,14 +408,14 @@ namespace InterfaceEngine_GUI
         public void OrderDependancies()
         {
             int i = 0;
-            while (i < _assertions.Count)
+            while (i < _labels.Count)
             {
                 bool repeat = false;
                 int j = i + 1;
 
-                while (j < _assertions.Count)
+                while (j < _labels.Count)
                 {
-                    if (_assertions[i].Contains(_assertions[j].Identifier))
+                    if (_labels[i].Contains(_labels[j].Identifier))
                     {
                         this.Swap(i, j);
 
@@ -351,9 +435,9 @@ namespace InterfaceEngine_GUI
 
         public void Swap(int i, int j)
         {
-            Statement tempS = _assertions[i];
-            _assertions[i] = _assertions[j];
-            _assertions[j] = tempS;
+            Statement tempS = _labels[i];
+            _labels[i] = _labels[j];
+            _labels[j] = tempS;
 
             List<bool> tempB = _values[i];
             _values[i] = _values[j];
@@ -373,12 +457,19 @@ namespace InterfaceEngine_GUI
             _numberRows -= 1;
         }
 
+        public void RemoveColumn(int index)
+        {
+            _labels.RemoveAt(index);
+
+            _values.RemoveAt(index);
+        }
+
         public Result Query(string theQuery)
         {
             int i = 0;
-            while(i < _assertions.Count)
+            while(i < _labels.Count)
             {
-                if (_assertions[i].Identifier == theQuery)
+                if (_labels[i].Identifier == theQuery)
                 {
                     bool falseFound = false, trueFound = false;
                     Result result;
