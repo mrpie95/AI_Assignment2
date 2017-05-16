@@ -38,6 +38,14 @@ namespace InferenceEngine.src
             }
         }
 
+        public Statement[] Stats
+        {
+            get
+            {
+                return _statements;
+            }
+        }
+
         public And(Statement[] internalStatments) : base("")
         {
             _statements = internalStatments;
@@ -70,7 +78,20 @@ namespace InferenceEngine.src
             return false;
         }
 
-        public override bool DependsOn(string ID)
+        public override bool ComprisedOf(string ID)
+        {
+            foreach (Statement s in _statements)
+            {
+                if (s.Identifier == ID)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public override bool CausedBy(string ID)
         {
             return this.Contains(ID);
         }

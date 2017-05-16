@@ -240,23 +240,6 @@ namespace InferenceEngine.src
                 }
             }
 
-            if (created == null)
-            {
-                //Or section
-                deconstruction = KnowledgeBase.DelimitString(input, new string[] { Or.Symbol }, new string[] { });
-
-                if (deconstruction.Length > 1)
-                {
-                    List<Statement> localWorld = new List<Statement>();
-                    foreach (string s in deconstruction)
-                    {
-                        localWorld.Add(this.GenerateStatement(s));
-                    }
-
-                    created = new Or(localWorld.ToArray());
-                }
-            }
-
             //Variables section
 
             if (created == null)

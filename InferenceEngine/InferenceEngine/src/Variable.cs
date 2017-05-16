@@ -47,13 +47,18 @@ namespace InferenceEngine.src
         {
             if (ID == this.Identifier)
             {
-
+                return true;
             }
 
             return false;
         }
 
-        public override bool DependsOn(string ID)
+        public override bool ComprisedOf(string ID)
+        {
+            return false;
+        }
+
+        public override bool CausedBy(string ID)
         {
             return false;
         }

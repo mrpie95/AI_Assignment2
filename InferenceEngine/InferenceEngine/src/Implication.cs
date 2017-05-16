@@ -46,9 +46,25 @@
             return false;
         }
 
-        public override bool DependsOn(string ID)
+        public override bool ComprisedOf(string ID)
         {
-            if (_statementA.Contains(ID))
+
+            if (_statementA.Identifier == ID)
+            {
+                return true;
+            }
+
+            if (_statementB.Identifier == ID)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public override bool CausedBy(string ID)
+        {
+            if (_statementA.Identifier == ID)
             {
                 return true;
             }

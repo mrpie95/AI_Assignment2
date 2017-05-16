@@ -8,6 +8,7 @@ namespace InferenceEngine.src
 {
     abstract class Statement
     {
+
         public string Identifier
         {
             get;
@@ -25,9 +26,14 @@ namespace InferenceEngine.src
             Identifier = identifier;
         }
 
+        //check recursively
         public abstract bool Contains(string ID);
 
-        public abstract bool DependsOn(string ID);
+        //check single layer
+        public abstract bool ComprisedOf(string ID);
+
+        //check single layer
+        public abstract bool CausedBy(string ID);
 
         public override string ToString()
         {

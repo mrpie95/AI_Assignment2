@@ -6,67 +6,160 @@ using System.Threading.Tasks;
 
 namespace InferenceEngine.src
 {
-    class ForwardChain
+    class ForwardChain : Chain
     {
-        private KnowledgeBase _kB;
-        private List<ChainNode> _nodes = new List<ChainNode>();
-        private List<ChainNode> _frontier = new List<ChainNode>();
-
-        public ForwardChain(KnowledgeBase kB)
+        public ForwardChain(KnowledgeBase kB) : base(kB)
         {
-            _kB = kB;
+
         }
 
-        public void Populate()
+        public override void InitialiseFrontier()
         {
-            //variables
-            int i = 0;
-            while (i < _kB.Universe.Length)
-            {
-                if ((_kB.Universe[i] as Variable) != null)
-                {
-                    ChainNode n = new ChainNode(_kB.Universe[i]);
+            _frontier.Clear();
 
-                    if ((_kB.Universe[i] as Variable).Defined)
+            foreach (ChainNode n in _nodes)
+            {
+                if (n.Asserted)
+                {
+                    _frontier.Add(n);
+                }
+            }
+        }
+
+        public override List<ChainNode> Solve()
+        {
+            List<ChainNode> result = new List<ChainNode>();
+
+            while (true)
+            {
+                bool changed = false;
+
+                List<ChainNode> toAdd = new List<ChainNode>();
+
+                int i = 0;
+                while (i < _frontier.Count)
+                {
+                    _frontier[i].EstablishForward();
+
+                    if (_frontier[i].Asserted)//asserted nodes get removed
+                    {
+                        int j = 0;
+                        while (j < _frontier[i].Effects.Length)
+                        {
+                            toAdd.Add(_frontier[i].Effects[j]);
+
+                            j += 1;
+                        }
+                        result.Add(_frontier[i]);
+                        _frontier.RemoveAt(i);
+
+                        changed = true;
+                    }
+
+                    else
+                    {
+                        i += 1;
+                    }
+                }
+
+                foreach (ChainNode n in toAdd)
+                {
+                    if ((!_frontier.Contains(n)) && (!result.Contains(n))) //if it hasn't already been considered
                     {
                         _frontier.Add(n);
                     }
-
-                    _nodes.Add(n);
                 }
 
-                i += 1;
-            }
-
-            //connections
-            i = 0;
-            while (i < _kB.Assertions.Length)
-            {
-                if ((_kB.Assertions[i] as Variable) == null)
+                if (!changed)//failure state frontier stagnant
                 {
-                    int j = 0;
-                    while (j < _nodes.Count)
+                    return null;
+                }
+
+                bool complete = true;
+
+                foreach (ChainNode q in _queries)
+                {
+                    if (!q.Asserted)
                     {
-
-                        int k = 0;
-                        while (k < _nodes.Count)
-                        {
-                            if ( j != k)
-                            {
-                                if (_nodes[j].Stat.DependsOn(_kB.Assertions[i].Identifier))
-                                {
-                                    //set dependencies
-                                }
-                            }
-
-                            k += 1;
-                        }
-
-                        j += 1;
+                        complete = false;
+                        break;
                     }
                 }
 
-                i += 1;
+                if (complete)
+                {
+                    foreach (ChainNode q in _queries)
+                    {
+                        bool found = false;
+
+                        foreach (ChainNode r in result)
+                        {
+                            if (q.Identifier == r.Identifier)
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        if (!found)
+                        {
+                            result.Add(q);
+                        }
+                    }
+
+                    this.CleanOutput(result);
+
+                    return result;
+                }
+            }
+        }
+
+        public string Solution()
+        {
+            this.InitialiseFrontier();
+
+            List<ChainNode> solved = this.Solve();
+
+            this.CleanOutput(solved);
+
+            string result = "";
+
+            if (solved == null)
+            {
+                result = "No\n";
+            }
+
+            else
+            {
+                result = "Yes: ";
+                foreach (ChainNode s in solved)
+                {
+                    result += s.Identifier;
+
+                    if (s != solved.Last())
+                    {
+                        result += ", ";
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private void CleanOutput(List<ChainNode> toClean)
+        {
+            int i = 0;
+            while (i < toClean.Count)
+            {
+                if ((toClean[i].Stat as Variable) == null)
+                {
+                    toClean.RemoveAt(i);
+                }
+
+                else
+                {
+                    i += 1;
+                }
             }
 
         }

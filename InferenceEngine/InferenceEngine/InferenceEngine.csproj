@@ -45,11 +45,11 @@
     <Compile Include="src\And.cs" />
     <Compile Include="src\AssertionEnum.cs" />
     <Compile Include="src\ChainNode.cs" />
+    <Compile Include="src\Chain.cs" />
     <Compile Include="src\ForwardChain.cs" />
     <Compile Include="src\Variable.cs" />
     <Compile Include="src\Implication.cs" />
     <Compile Include="src\KnowledgeBase.cs" />
-    <Compile Include="src\Or.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Result.cs" />
