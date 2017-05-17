@@ -107,61 +107,9 @@ namespace InferenceEngine.src
                         }
                     }
 
-                    this.CleanOutput(result);
-
                     return result;
                 }
             }
-        }
-
-        public string Solution()
-        {
-            this.InitialiseFrontier();
-
-            List<ChainNode> solved = this.Solve();
-
-            this.CleanOutput(solved);
-
-            string result = "";
-
-            if (solved == null)
-            {
-                result = "No\n";
-            }
-
-            else
-            {
-                result = "Yes: ";
-                foreach (ChainNode s in solved)
-                {
-                    result += s.Identifier;
-
-                    if (s != solved.Last())
-                    {
-                        result += ", ";
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        private void CleanOutput(List<ChainNode> toClean)
-        {
-            int i = 0;
-            while (i < toClean.Count)
-            {
-                if ((toClean[i].Stat as Variable) == null)
-                {
-                    toClean.RemoveAt(i);
-                }
-
-                else
-                {
-                    i += 1;
-                }
-            }
-
-        }
+        } 
     }
 }

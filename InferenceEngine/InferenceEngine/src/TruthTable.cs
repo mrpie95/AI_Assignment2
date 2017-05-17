@@ -11,6 +11,7 @@ namespace InferenceEngine.src
         private List<Statement> _labels = new List<Statement>();
         private KnowledgeBase _kB;
         private List<List<bool>> _values = new List<List<bool>>();
+        private List<bool> _valid = new List<bool>();
         private int _numberRows;
 
         public int Rows
@@ -18,6 +19,14 @@ namespace InferenceEngine.src
             get
             {
                 return _numberRows;
+            }
+        }
+
+        public bool[] Valid
+        {
+            get
+            {
+                return _valid.ToArray();
             }
         }
 
@@ -127,6 +136,14 @@ namespace InferenceEngine.src
                 i += 1;
             }
 
+            i = 0;
+            while (i < _numberRows)
+            {
+                _valid.Add(true);
+
+                i += 1;
+            }
+
             //booleans created before here
 
             //Assertions
@@ -174,8 +191,7 @@ namespace InferenceEngine.src
                 i -= 1;
             }
 
-            //Fill composites
-            
+            //Fill composites            
             i = 0;
             while (i < _numberRows)
             {
@@ -217,11 +233,12 @@ namespace InferenceEngine.src
         public void Clean()
         {
             int i = 0;
-            while (i < _labels.Count)            
+            while (i < _labels.Count)
             {
                 if ((_labels[i] as Variable) == null)
                 {
                     bool found = false;
+
                     int k = 0;
                     while (k < _kB.Assertions.Length)
                     {
@@ -230,6 +247,7 @@ namespace InferenceEngine.src
                             found = true;
                             break;
                         }
+
                         k += 1;
                     }
 
@@ -240,13 +258,12 @@ namespace InferenceEngine.src
                         {
                             if (!_values[i][j])
                             {
-                                this.RemoveRow(j);
+
+                                _valid[j] = false;
                             }
 
-                            else
-                            {
-                                j += 1;
-                            }
+                            
+                            j += 1;
                         }
                     }                    
                 }
@@ -272,54 +289,57 @@ namespace InferenceEngine.src
             i = 0;
             while (i < _numberRows)
             {
-                int j = 0;
-                while(j < _labels.Count)
+                if (_valid[i])
                 {
-                    int leftBuffer = 0, rightBuffer = 0;
-
-                    int tempSize = _labels[j].Identifier.Length - 1;
-
-                    if (tempSize % 2 == 0)
+                    int j = 0;
+                    while (j < _labels.Count)
                     {
-                        leftBuffer = tempSize / 2;
-                        rightBuffer = tempSize / 2;
+                        int leftBuffer = 0, rightBuffer = 0;
+
+                        int tempSize = _labels[j].Identifier.Length - 1;
+
+                        if (tempSize % 2 == 0)
+                        {
+                            leftBuffer = tempSize / 2;
+                            rightBuffer = tempSize / 2;
+                        }
+
+                        else
+                        {
+                            leftBuffer = tempSize / 2 + 1; // left gets the left overs
+                            rightBuffer = tempSize / 2;
+                        }
+
+                        Console.Write("[");
+
+                        while (leftBuffer > 0)
+                        {
+                            Console.Write(" ");
+                            leftBuffer -= 1;
+                        }
+
+                        if (_values[j][i])
+                        {
+                            Console.Write("1");
+                        }
+
+                        else
+                        {
+                            Console.Write("0");
+                        }
+
+                        while (rightBuffer > 0)
+                        {
+                            Console.Write(" ");
+                            rightBuffer -= 1;
+                        }
+
+                        Console.Write("]");
+                        j += 1;
                     }
 
-                    else
-                    {
-                        leftBuffer = tempSize / 2 + 1; // left gets the left overs
-                        rightBuffer = tempSize / 2;
-                    }
-
-                    Console.Write("[");
-
-                    while (leftBuffer > 0)
-                    {
-                        Console.Write(" ");
-                        leftBuffer -= 1;
-                    }
-
-                    if (_values[j][i])
-                    {
-                        Console.Write("1");
-                    }
-
-                    else
-                    {
-                        Console.Write("0");
-                    }
-
-                    while (rightBuffer > 0)
-                    {
-                        Console.Write(" ");
-                        rightBuffer -= 1;
-                    }
-
-                    Console.Write("]");
-                    j += 1;
+                    Console.WriteLine();
                 }
-
-                Console.WriteLine();
 
                 i += 1;
             }
@@ -457,44 +477,50 @@ namespace InferenceEngine.src
         public Result Query(string theQuery)
         {
             int i = 0;
-            while(i < _labels.Count)
+            while (i < _labels.Count)
             {
                 if (_labels[i].Identifier == theQuery)
                 {
                     bool falseFound = false, trueFound = false;
                     Result result;
 
-                    foreach (bool b in _values[i])
+                    int j = 0;
+                    while(j < _values[i].Count)
                     {
-                        if (b)
+                        if (_valid[j])
                         {
-                            trueFound = true;
+                            if (_values[i][j])
+                            {
+                                trueFound = true;
+                            }
+
+                            else
+                            {
+                                falseFound = true;
+                            }
+
+                            if (trueFound && falseFound)
+                            {
+                                break;
+                            }
                         }
 
-                        else
-                        {
-                            falseFound = true;
-                        }
-
-                        if (trueFound && falseFound)
-                        {
-                            break;
-                        }
+                        j += 1;
                     }
 
                     if (trueFound && falseFound)
                     {
-                        result = (Result)(1);
+                        result = (Result)(1);//unknown
                     }
 
                     else if (trueFound)
                     {
-                        result = (Result)(0);
+                        result = (Result)(0);//true
                     }
 
                     else
                     {
-                        result = (Result)(2);
+                        result = (Result)(2);//false
                     }
 
                     return result;
@@ -502,7 +528,23 @@ namespace InferenceEngine.src
 
                 i += 1;
             }
+            
             return (Result)(1);//unknown
+        }
+
+        public int ValidRows()
+        {
+            int result = 0;
+
+            foreach (bool b in _valid)
+            {
+                if (b)
+                {
+                    result += 1;
+                }
+            }
+
+            return result;
         }
     }
 }

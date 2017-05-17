@@ -45,6 +45,7 @@ namespace InferenceEngine.src
                 {
                     _nodes.Add(new ChainNode(stat));
                 }
+
             }
 
             foreach (Statement stat in _kB.Assertions)// set assertions
@@ -99,6 +100,7 @@ namespace InferenceEngine.src
                         ChainNode.EstablishRelationship(p, child);
                     }
 
+
                 }
 
                 else if ((stat as Implication) != null)
@@ -134,6 +136,46 @@ namespace InferenceEngine.src
                 }
             }
 
+            int j = 0;
+            while (j < _nodes.Count)//remove non-variables
+            {
+                List<ChainNode> causes = new List<ChainNode>();
+                List<ChainNode> effects = new List<ChainNode>();
+
+                if ((_nodes[j].Stat as Variable) == null)//non variable
+                {
+                    foreach (ChainNode c in _nodes[j].Causes)
+                    {
+                        causes.Add(c);
+
+                        c.RemoveEffect(_nodes[j]);//disassociate
+                    }
+
+                    foreach (ChainNode e in _nodes[j].Effects)
+                    {
+                        effects.Add(e);
+                        
+                        e.RemoveCause(_nodes[j]);//disassociate
+                    }
+
+                    _nodes.RemoveAt(j);
+
+                    foreach (ChainNode c in causes)
+                    {
+                        foreach (ChainNode e in effects)
+                        {
+                            e.AddCause(c);//associate
+                            c.AddEffect(e);
+                        }
+                    }
+                }
+
+                else
+                {
+                    j += 1;
+                }
+            }
+
             foreach (ChainNode n in _nodes) // fill queries
             {
                 foreach (Statement q in _kB.Queries)
@@ -149,6 +191,38 @@ namespace InferenceEngine.src
         public abstract void InitialiseFrontier();
 
         public abstract List<ChainNode> Solve();
+
+        public string Solution()
+        {
+            this.InitialiseFrontier();
+
+            List<ChainNode> solved = this.Solve();
+
+            //this.CleanOutput(solved);
+
+            string result = "";
+
+            if (solved == null)
+            {
+                result = "No\n";
+            }
+
+            else
+            {
+                result = "Yes: ";
+                foreach (ChainNode s in solved)
+                {
+                    result += s.Identifier;
+
+                    if (s != solved.Last())
+                    {
+                        result += ", ";
+                    }
+                }
+            }
+
+            return result;
+        }
 
         public string Description()
         {

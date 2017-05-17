@@ -72,6 +72,40 @@ namespace InferenceEngine.src
             _effect.Add(toAdd);
         }
 
+        public void RemoveCause(ChainNode toRemove)
+        {
+            int i = 0;
+            while (i < _cause.Count)
+            {
+                if (toRemove.Identifier == _cause[i].Identifier)
+                {
+                    _cause.RemoveAt(i);
+                }
+
+                else
+                {
+                    i += 1;
+                }
+            }
+        }
+
+        public void RemoveEffect(ChainNode toRemove)
+        {
+            int i = 0;
+            while (i < _effect.Count)
+            {
+                if (toRemove.Identifier == _effect[i].Identifier)
+                {
+                    _effect.RemoveAt(i);
+                }
+
+                else
+                {
+                    i += 1;
+                }
+            }
+        }
+
         public void EstablishForward()
         {
             foreach (ChainNode c in _cause)

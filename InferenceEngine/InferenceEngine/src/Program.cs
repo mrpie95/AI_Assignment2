@@ -10,7 +10,8 @@ namespace InferenceEngine.src
     {
         static void Main(string[] args)
         {
-            ChainF();
+            //ChainF();
+            TTable();
         }
 
         static void ChainF()
@@ -56,7 +57,7 @@ namespace InferenceEngine.src
             {
                 if (tt.Query(s) == Result.Valid)
                 {
-                    Console.WriteLine("YES: " + tt.Rows);
+                    Console.WriteLine("YES: " + tt.ValidRows());
                 }
 
                 else
