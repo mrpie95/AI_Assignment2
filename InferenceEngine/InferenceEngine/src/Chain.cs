@@ -197,13 +197,30 @@ namespace InferenceEngine.src
 
         public abstract List<ChainNode> Solve();
 
+        private void Clean(List<ChainNode> toClean)
+        {
+            int i = 0;
+            while (i < toClean.Count)
+            {
+                if ((toClean[i].Stat as Variable) == null)//remove none variables
+                {
+                    toClean.RemoveAt(i);
+                }
+
+                else
+                {
+                    i += 1;
+                }
+            }
+        }
+
         public string Solution()
         {
             this.InitialiseFrontier();
 
             List<ChainNode> solved = this.Solve();
 
-            //this.CleanOutput(solved);
+            this.Clean(solved);
 
             string result = "";
 
