@@ -62,5 +62,10 @@ namespace InferenceEngine.src
         {
             return false;
         }
+
+        public override string[] Dependants()
+        {
+            return new string[] { };
+        }
     }
 }

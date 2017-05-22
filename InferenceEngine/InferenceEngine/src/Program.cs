@@ -10,23 +10,29 @@ namespace InferenceEngine.src
     {
         static void Main(string[] args)
         {
-            //ChainF();
-            TTable();
+            ChainF();
+            //TTable();
         }
 
         static void ChainF()
         {
-            /*KnowledgeBase KB = new KnowledgeBase();
-            KB.Interpret("A;B;A&B=>C;", AssertionEnum.Assertion);
+            /* KnowledgeBase KB = new KnowledgeBase();
+             KB.Interpret("a&b=>c; c=>a; c;", AssertionEnum.Assertion);
 
-            string query = "C;";
-            KB.Interpret(query, AssertionEnum.Query);*/
+             string query = "d;";
+             KB.Interpret(query, AssertionEnum.Query);*/
 
             KnowledgeBase KB = new KnowledgeBase();
-            KB.Interpret("p2=> p3; p3 => p1; c => e; b&e => f; f&g => h; p1=>d; p1&p3 => c; a; b; p2;", AssertionEnum.Assertion);
+            KB.Interpret("a&b => d; a; c=>d; c;", AssertionEnum.Assertion);
 
             string query = "d;";
             KB.Interpret(query, AssertionEnum.Query);
+
+            /*KnowledgeBase KB = new KnowledgeBase();
+            KB.Interpret("p2=> p3; p3 => p1; c => e; b&e => f; f&g => h; p1=>d; p1&p3 => c; a; b; p2;", AssertionEnum.Assertion);
+
+            string query = "d;";
+            KB.Interpret(query, AssertionEnum.Query);*/
 
             ForwardChain f = new ForwardChain(KB);
 

@@ -35,6 +35,8 @@ namespace InferenceEngine.src
         //check single layer
         public abstract bool CausedBy(string ID);
 
+        public abstract string[] Dependants();
+
         public override string ToString()
         {
             return this.Identifier + " is: " + this.IsTrue;

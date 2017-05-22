@@ -1,4 +1,10 @@
-﻿namespace InferenceEngine.src
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace InferenceEngine.src
 {
     class Implication : Statement
     {
@@ -70,6 +76,15 @@
             }
 
             return false;
+        }
+
+        public override string[] Dependants()
+        {
+            List<string> result = new List<string>();
+
+            result.Add(_statementA.Identifier);
+
+            return result.ToArray();
         }
     }
 }

@@ -95,5 +95,19 @@ namespace InferenceEngine.src
         {
             return this.Contains(ID);
         }
+
+
+
+        public override string[] Dependants()
+        {
+            List<string> result = new List<string>();
+
+            foreach (Statement s in _statements)
+            {
+                result.Add(s.Identifier);
+            }
+
+            return result.ToArray();
+        }
     }
 }

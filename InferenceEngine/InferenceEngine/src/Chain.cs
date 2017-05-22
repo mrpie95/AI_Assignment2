@@ -43,7 +43,14 @@ namespace InferenceEngine.src
 
                 else
                 {
-                    _nodes.Add(new ChainNode(stat));
+                    ChainNode toAdd = new ChainNode(stat);
+
+                    if ((stat as Variable) != null)
+                    {
+                        toAdd.IsOr = true;
+                    }
+
+                    _nodes.Add(toAdd);
                 }
 
             }
@@ -99,8 +106,6 @@ namespace InferenceEngine.src
                     {
                         ChainNode.EstablishRelationship(p, child);
                     }
-
-
                 }
 
                 else if ((stat as Implication) != null)
@@ -136,7 +141,7 @@ namespace InferenceEngine.src
                 }
             }
 
-            int j = 0;
+            /*int j = 0;
             while (j < _nodes.Count)//remove non-variables
             {
                 List<ChainNode> causes = new List<ChainNode>();
@@ -174,7 +179,7 @@ namespace InferenceEngine.src
                 {
                     j += 1;
                 }
-            }
+            }*/
 
             foreach (ChainNode n in _nodes) // fill queries
             {

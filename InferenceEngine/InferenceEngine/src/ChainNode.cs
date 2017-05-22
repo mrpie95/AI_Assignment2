@@ -35,6 +35,13 @@ namespace InferenceEngine.src
             }
         }
 
+        public bool IsOr
+        {
+            get;
+
+            set;
+        }
+
         public ChainNode[] Effects
         {
             get
@@ -56,6 +63,8 @@ namespace InferenceEngine.src
             _stat = stat;
 
             this.Asserted = false;
+
+            this.IsOr = false;
 
             _effect = new List<ChainNode>();
 
@@ -108,16 +117,31 @@ namespace InferenceEngine.src
 
         public void EstablishForward()
         {
-            foreach (ChainNode c in _cause)
+            if (!this.IsOr)
             {
-                if (!c.Asserted)
+                foreach (ChainNode c in _cause)
                 {
-                    return;
+                    if (!c.Asserted)
+                    {
+                        return;
+                    }
+                    //if all causes are asserted then this is asserted
                 }
-                //if all causes are asserted then this is asserted
+
+                this.Asserted = true;
             }
 
-            this.Asserted = true;
+            else
+            {
+                foreach (ChainNode c in _cause)
+                {
+                    if (c.Asserted)
+                    {
+                        this.Asserted = true;
+                    }
+                    //if any causes are asserted then this is asserted
+                }
+            }
         }
 
         public string Description()
