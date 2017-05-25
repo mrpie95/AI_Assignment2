@@ -165,6 +165,7 @@ namespace InferenceEngine.src
             return result.ToArray();
         }
 
+        //Interprets text file
         public void Interpret(string input, AssertionEnum isAssertion)
         {
             List<string> stats = new List<string>(KnowledgeBase.DelimitString(input, new string[] { KnowledgeBase.Delimiter }, new string[] { " " }));

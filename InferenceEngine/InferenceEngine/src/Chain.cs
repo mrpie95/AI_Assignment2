@@ -219,9 +219,7 @@ namespace InferenceEngine.src
             this.InitialiseFrontier();
 
             List<ChainNode> solved = this.Solve();
-
-            this.Clean(solved);
-
+               
             string result = "";
 
             if (solved == null)
@@ -231,6 +229,7 @@ namespace InferenceEngine.src
 
             else
             {
+                this.Clean(solved);
                 result = "Yes: ";
                 foreach (ChainNode s in solved)
                 {

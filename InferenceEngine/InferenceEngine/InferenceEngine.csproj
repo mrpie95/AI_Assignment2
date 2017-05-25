@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="src\And.cs" />
     <Compile Include="src\AssertionEnum.cs" />
+    <Compile Include="src\BackwardChain.cs" />
     <Compile Include="src\ChainNode.cs" />
     <Compile Include="src\Chain.cs" />
     <Compile Include="src\ForwardChain.cs" />

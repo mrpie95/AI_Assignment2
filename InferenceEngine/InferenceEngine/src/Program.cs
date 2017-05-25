@@ -31,7 +31,7 @@ namespace InferenceEngine.src
 
             else if (args[0].ToLower() == "bc".ToLower())
             {
-                throw new NotImplementedException("BC not implemented yet!");
+                ChainB(KB);
             }
 
             else
@@ -46,6 +46,13 @@ namespace InferenceEngine.src
             ForwardChain f = new ForwardChain(KB);
 
             Console.WriteLine(f.Solution());
+        }
+
+        static void ChainB(KnowledgeBase KB)
+        {
+            BackwardChain b = new BackwardChain(KB);
+
+            Console.WriteLine(b.Solution());
         }
 
         static void TTable(KnowledgeBase KB)

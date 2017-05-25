@@ -10,3 +10,8 @@ C:\Users\jaeha\Documents\Swinburne\Intro to AI\AI_Assignment2\InferenceEngine\In
 C:\Users\jaeha\Documents\Swinburne\Intro to AI\AI_Assignment2\InferenceEngine\InferenceEngine\bin\Debug\InferenceEngine.exe
 C:\Users\jaeha\Documents\Swinburne\Intro to AI\AI_Assignment2\InferenceEngine\InferenceEngine\bin\Debug\InferenceEngine.pdb
 C:\Users\jaeha\Documents\Swinburne\Intro to AI\AI_Assignment2\InferenceEngine\InferenceEngine\obj\Debug\InferenceEngine.csprojResolveAssemblyReference.cache
+C:\Users\micha\Desktop\AI_Assignment2-master\InferenceEngine\InferenceEngine\bin\Debug\InferenceEngine.exe.config
+C:\Users\micha\Desktop\AI_Assignment2-master\InferenceEngine\InferenceEngine\bin\Debug\InferenceEngine.exe
+C:\Users\micha\Desktop\AI_Assignment2-master\InferenceEngine\InferenceEngine\bin\Debug\InferenceEngine.pdb
+C:\Users\micha\Desktop\AI_Assignment2-master\InferenceEngine\InferenceEngine\obj\Debug\InferenceEngine.exe
+C:\Users\micha\Desktop\AI_Assignment2-master\InferenceEngine\InferenceEngine\obj\Debug\InferenceEngine.pdb

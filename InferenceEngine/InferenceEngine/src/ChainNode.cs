@@ -27,6 +27,7 @@ namespace InferenceEngine.src
             }
         }
 
+
         public Statement Stat
         {
             get
@@ -35,6 +36,7 @@ namespace InferenceEngine.src
             }
         }
 
+        //Checks if the current chainnode is an OR statement or an AND statement
         public bool IsOr
         {
             get;
@@ -143,6 +145,72 @@ namespace InferenceEngine.src
                 }
             }
         }
+
+        public List<ChainNode> EstablishBackward()
+        {
+            if (!this.IsOr) //AND
+            {
+                List<ChainNode> result = new List<ChainNode>();
+                foreach (ChainNode c in _cause)
+                {
+                    List<ChainNode> temp = new List<ChainNode>();
+                    temp = c.EstablishBackward();
+
+
+                    //If the node does not have any causes (at the end)
+                    if (temp == null)
+                    {
+                        return temp;
+                    }
+                    //else check if the node is already apart of the result
+                    foreach (ChainNode t in temp)
+                    {
+                        bool found = false;
+                        foreach (ChainNode r in result)
+                        {
+                            if (r.Identifier == t.Identifier)
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found)
+                        {
+                            result.Add(t);
+                        }
+                    }
+                }
+                result.Add(this);
+                return result;
+            }
+            else //OR statements
+            {
+                List<ChainNode> result = new List<ChainNode>();
+                foreach (ChainNode c in _cause)
+                {
+                    result = c.EstablishBackward();
+                    if (result == null) //If there is no causes, then add the current chainnode
+                    {
+                        result = new List<ChainNode>();
+                        result.Add(this);
+                        return result;
+                    }
+                    else
+                    {
+                        result.Add(this);
+                        return result;
+                    }
+                }
+                // This is where it adds the nodes if it doesn't have any children
+                if (this.Asserted)
+                {
+                    result.Add(this);
+                    return result;
+                }
+            }
+            return null;
+        }
+            
 
         public string Description()
         {
