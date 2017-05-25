@@ -187,6 +187,48 @@ namespace InferenceEngine.src
             return result;
         }
 
+        public bool CheckCausedBy(ChainNode b)
+        {
+            if (this.IsOr)
+            {
+                foreach (ChainNode c in this.Causes)
+                {
+                    if (c == b)//if a cause node is b then this is caused by b
+                    {
+                        return true;
+                    }
+
+                    else if (c.CheckCausedBy(b))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            else
+            {
+                bool result = true;
+
+                foreach (ChainNode c in this.Causes)
+                {
+                    if (c != b)//if a cause node is b then this is caused by b
+                    {
+                        return true;
+                    }
+
+                    else if (c.CheckCausedBy(b))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+        }
+
         public static void EstablishRelationship(ChainNode parent, ChainNode child)
         {
             parent.AddEffect(child);

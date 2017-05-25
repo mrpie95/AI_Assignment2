@@ -546,5 +546,25 @@ namespace InferenceEngine.src
 
             return result;
         }
+
+        public string Solution()
+        {
+            string result = "";
+
+            foreach (Statement s in _kB.Queries)
+            {
+                if (this.Query(s.Identifier) == Result.Valid)
+                {
+                    result += String.Format("YES: " + this.ValidRows() + "\n");
+                }
+
+                else
+                {
+                    result += String.Format("NO\n");
+                }
+            }
+
+            return result;
+        }
     }
 }

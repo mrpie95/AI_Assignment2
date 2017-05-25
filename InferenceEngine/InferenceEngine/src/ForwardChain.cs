@@ -26,6 +26,17 @@ namespace InferenceEngine.src
             }
         }
 
+        public bool CheckDependance(ChainNode a, ChainNode b)
+        {
+            if (a.IsOr)
+            {
+                foreach (ChainNode c in a.Causes)
+                {
+
+                }
+            }
+        }
+
         public override List<ChainNode> Solve()
         {
             List<ChainNode> result = new List<ChainNode>();

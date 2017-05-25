@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,38 @@ namespace InferenceEngine.src
             get
             {
                 return ";";
+            }
+        }
+
+        public static string StandardDirectory
+        {
+            get
+            {
+                return "KnowledgeBases";
+            }
+        }
+
+        public static string StandardExtension
+        {
+            get
+            {
+                return ".txt";
+            }
+        }
+
+        public static string QueryID
+        {
+            get
+            {
+                return "ASK";
+            }
+        }
+
+        public static string AssertionID
+        {
+            get
+            {
+                return "TELL";
             }
         }
 
@@ -297,6 +330,50 @@ namespace InferenceEngine.src
             }
 
             return result;
+        }
+
+        public void Load(string name)
+        {
+            string path = KnowledgeBase.StandardDirectory + "/" + name + KnowledgeBase.StandardExtension;
+
+            if (!Directory.Exists(KnowledgeBase.StandardDirectory))
+            {
+                Directory.CreateDirectory(KnowledgeBase.StandardDirectory);
+            }
+
+            if (File.Exists(path))
+            {
+                AssertionEnum asserted = AssertionEnum.Assertion;
+
+                StreamReader reader = new StreamReader(path);
+
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();//incrementer
+
+                    if (line == KnowledgeBase.QueryID)
+                    {
+                        asserted = AssertionEnum.Query;
+                    }
+
+                    else if (line == KnowledgeBase.AssertionID)
+                    {
+                        asserted = AssertionEnum.Assertion;
+                    }
+
+                    else
+                    {
+                        this.Interpret(line, asserted);
+                    }
+                }
+
+                reader.Close();
+            }
+
+            else
+            {
+                Console.WriteLine("Couldn't load knowledgebase");
+            }
         }
     }
 }
