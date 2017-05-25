@@ -17,19 +17,19 @@ namespace InferenceEngine.src
             }
 
             KnowledgeBase KB = new KnowledgeBase();
-            KB.Load(args[0]);
+            KB.Load(args[1]);
 
-            if (args[1].ToLower() == "fc".ToLower())
+            if (args[0].ToLower() == "fc".ToLower())
             {
                 ChainF(KB);
             }
 
-            else if (args[1].ToLower() == "tt".ToLower())
+            else if (args[0].ToLower() == "tt".ToLower())
             {
                 TTable(KB);
             }
 
-            else if (args[1].ToLower() == "bc".ToLower())
+            else if (args[0].ToLower() == "bc".ToLower())
             {
                 throw new NotImplementedException("BC not implemented yet!");
             }
