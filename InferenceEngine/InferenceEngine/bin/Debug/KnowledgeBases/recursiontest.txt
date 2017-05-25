@@ -1,4 +1,4 @@
 TELL
 a&b=>c; c=>a; c;
 ASK
-c;
+a;

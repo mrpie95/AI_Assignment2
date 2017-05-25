@@ -146,21 +146,31 @@ namespace InferenceEngine.src
             }
         }
 
-        public List<ChainNode> EstablishBackward()
+        public List<ChainNode> EstablishBackward(List<ChainNode> visited)
         {
+            //checks if this node has been visited before
+            foreach (ChainNode v in visited)
+            {
+                if (this.Identifier == v.Identifier)
+                {
+                    //it has visited this before, therefore there is recursion
+                    return null;
+                }
+            }
+            visited.Add(this);
             if (!this.IsOr) //AND
             {
                 List<ChainNode> result = new List<ChainNode>();
                 foreach (ChainNode c in _cause)
                 {
                     List<ChainNode> temp = new List<ChainNode>();
-                    temp = c.EstablishBackward();
-
+                    temp = c.EstablishBackward(visited);
 
                     //If the node does not have any causes (at the end)
                     if (temp == null)
                     {
-                        return temp;
+                        return null;
+                        
                     }
                     //else check if the node is already apart of the result
                     foreach (ChainNode t in temp)
@@ -188,7 +198,7 @@ namespace InferenceEngine.src
                 List<ChainNode> result = new List<ChainNode>();
                 foreach (ChainNode c in _cause)
                 {
-                    result = c.EstablishBackward();
+                    result = c.EstablishBackward(visited);
                     if (result == null) //If there is no causes, then add the current chainnode
                     {
                         result = new List<ChainNode>();

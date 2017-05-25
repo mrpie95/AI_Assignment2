@@ -27,7 +27,8 @@ namespace InferenceEngine.src
                 {
                     if (q.Identifier == n.Identifier)
                     {
-                        List<ChainNode> output = n.EstablishBackward();
+                        List<ChainNode> output = new List<ChainNode>();
+                        output = n.EstablishBackward(output);
                         return output;              
                     }
                 }
