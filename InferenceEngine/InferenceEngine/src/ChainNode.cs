@@ -148,6 +148,16 @@ namespace InferenceEngine.src
 
         public List<ChainNode> EstablishBackward(List<ChainNode> visited)
         {
+            //This is true if it's asserted
+            if (this.Asserted)
+            {
+                List<ChainNode> result = new List<ChainNode>();
+
+                result.Add(this);
+
+                return result;
+            }
+
             //checks if this node has been visited before
             foreach (ChainNode v in visited)
             {
@@ -157,7 +167,9 @@ namespace InferenceEngine.src
                     return null;
                 }
             }
+
             visited.Add(this);
+
             if (!this.IsOr) //AND
             {
                 List<ChainNode> result = new List<ChainNode>();
@@ -170,8 +182,10 @@ namespace InferenceEngine.src
                     if (temp == null)
                     {
                         return null;
-                        
                     }
+
+                    //not null after here
+
                     //else check if the node is already apart of the result
                     foreach (ChainNode t in temp)
                     {
@@ -184,40 +198,39 @@ namespace InferenceEngine.src
                                 break;
                             }
                         }
+
                         if (!found)
                         {
                             result.Add(t);
                         }
                     }
                 }
+
+                this.Asserted = true;
+
                 result.Add(this);
+
                 return result;
             }
+
             else //OR statements
             {
                 List<ChainNode> result = new List<ChainNode>();
+
                 foreach (ChainNode c in _cause)
                 {
                     result = c.EstablishBackward(visited);
-                    if (result == null) //If there is no causes, then add the current chainnode
+                    
+                    if(result != null)//if not null this node is true
                     {
-                        result = new List<ChainNode>();
+                        this.Asserted = true;
                         result.Add(this);
+                        
                         return result;
                     }
-                    else
-                    {
-                        result.Add(this);
-                        return result;
-                    }
-                }
-                // This is where it adds the nodes if it doesn't have any children
-                if (this.Asserted)
-                {
-                    result.Add(this);
-                    return result;
                 }
             }
+            
             return null;
         }
             

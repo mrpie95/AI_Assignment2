@@ -231,6 +231,7 @@ namespace InferenceEngine.src
             {
                 this.Clean(solved);
                 result = "Yes: ";
+
                 foreach (ChainNode s in solved)
                 {
                     result += s.Identifier;
