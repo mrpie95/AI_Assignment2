@@ -57,6 +57,8 @@
     <Compile Include="scr\And.cs" />
     <Compile Include="scr\AssertionEnum.cs" />
     <Compile Include="scr\ChainNode.cs" />
+    <Compile Include="scr\FOR.cs" />
+    <Compile Include="scr\Interpreter.cs" />
     <Compile Include="scr\ForwardChain.cs" />
     <Compile Include="scr\Implication.cs" />
     <Compile Include="scr\KnowledgeBase.cs" />

@@ -16,6 +16,8 @@ namespace InterfaceEngine_GUI
         private static String attributesString = "";
         private static KnowledgeBase KB;
         private static TruthTable tt;
+        private static Interpreter itr;
+        //private
 
         public MainWindow()
         {
@@ -112,7 +114,9 @@ namespace InterfaceEngine_GUI
         {
                 KB = new KnowledgeBase();
                 //KB.Interpret("p2=> p3; p3 => p1; c => e; b&e => f; f&g => h; p1=>d; p1&p3 => c; a; b; p2;");
+                
                 KB.Interpret(attributesString, AssertionEnum.Assertion);
+
                 tt = new TruthTable(KB);
                 printTable();
         }
@@ -120,13 +124,27 @@ namespace InterfaceEngine_GUI
         //button event handlers 
         private void submitAttribute()
         {
-            if ((addAttribute.Text != "") && !(addAttribute.Text.StartsWith(" ")))
+            
+            foreach (String statement in new Interpreter(addAttribute.Text).ProcessInput())
             {
-                attributesString += addAttribute.Text + "; ";              
-                attributes.Text += addAttribute.Text+";\n";
-                addAttribute.Text = "";
-                attributes.SelectionStart = attributesString.Length;
+                if (statement.Contains("#ERROR"))
+                {
+                    MessageBox.Show(statement);
+                    break;
+                }
+
+                else if (statement != "")
+                {               
+                    attributesString += statement;
+                    attributes.Text += statement + "\n";
+                    
+                }
             }
+            addAttribute.Text = "";
+            attributes.SelectionStart = attributesString.Length;
+
+
+          
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
