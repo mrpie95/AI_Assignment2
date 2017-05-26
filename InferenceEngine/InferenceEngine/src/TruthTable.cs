@@ -14,6 +14,16 @@ namespace InferenceEngine.src
         private List<bool> _valid = new List<bool>();
         private int _numberRows;
 
+         public List<Statement> Statements
+        {
+            get { return _labels; }
+        }
+
+        public List<List<bool>> Assertions
+        {
+            get { return _values; }
+        }
+
         public int Rows
         {
             get
