@@ -1,0 +1,32 @@
+﻿<Window x:Class="InterfaceEngine_GUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InterfaceEngine_GUI"
+        mc:Ignorable="d"
+        Title="AI Assignment 2" Height="604.279" Width="566.939">
+    <Grid Margin="0,0,-8,-5">
+        <TabControl HorizontalAlignment="Left" Height="568" VerticalAlignment="Top" Width="557" SelectionChanged="TabControl_SelectionChanged">
+            <TabItem Header="Assertions" x:Name="assertions" Height="22" VerticalAlignment="Top">
+                <Grid Background="White" Margin="0,0,-4,4">
+                    <TextBox x:Name="addAttribute" HorizontalAlignment="Center" Height="29" Margin="49,31,89,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="210" KeyUp="TextBox_KeyUp" VerticalScrollBarVisibility="Auto"/>
+                    <Label Content="Add Assertions" HorizontalAlignment="Left" Margin="152,5,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="attributes" HorizontalAlignment="Center" Height="188" Margin="49,99,49,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="250" KeyUp="TextBox_KeyUp" VerticalScrollBarVisibility="Auto"/>
+                    <Button x:Name="btnGenKB" Content="Generate Knowledge Base" HorizontalAlignment="Left" Margin="152,309,0,0" VerticalAlignment="Top" Width="148" Click="Button_Click_Gen" Background="WhiteSmoke"/>
+                    <Button x:Name="btnClearKB" Content="Clear" HorizontalAlignment="Left" Margin="327,309,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_Clear" Background="#FFFF5858"/>
+                    <Button Content="&gt;" HorizontalAlignment="Left" Margin="368,31,0,0" VerticalAlignment="Top" Width="34" Height="29" Click="Button_Click_Attribute" Background="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"/>
+                </Grid>
+
+            </TabItem>
+            <TabItem Header="Truth Table" x:Name="TT">
+                <Grid Background="#FFE5E5E5">
+                    <DataGrid x:Name="Table" HorizontalAlignment="Left" Height="520" Margin="10,10,0,0" VerticalAlignment="Top" Width="519" SelectionChanged="DataGrid_SelectionChanged" ItemsSource="{Binding}"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+
+
+    </Grid>
+</Window>
